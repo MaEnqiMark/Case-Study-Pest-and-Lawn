@@ -20,10 +20,13 @@ export function AIChatbot() {
   ]);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    const container = chatContainerRef.current;
+    if (container) {
+      container.scrollTo({ top: container.scrollHeight, behavior: "smooth" });
+    }
   }, [messages]);
 
   const handleSend = async () => {
@@ -94,7 +97,7 @@ export function AIChatbot() {
       <section className="py-12 pb-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-white border-2 border-gray-200 rounded-2xl shadow-lg overflow-hidden">
-            <div className="h-[600px] overflow-y-auto p-6 space-y-4 bg-gray-50">
+            <div ref={chatContainerRef} className="h-[600px] overflow-y-auto p-6 space-y-4 bg-gray-50">
               {messages.map((message) => (
                 <div key={message.id} className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}>
                   <div className={`flex gap-3 max-w-[80%] ${message.sender === "user" ? "flex-row-reverse" : "flex-row"}`}>
@@ -122,7 +125,7 @@ export function AIChatbot() {
                   </div>
                 </div>
               )}
-              <div ref={messagesEndRef} />
+              <div />
             </div>
 
             <div className="p-4 bg-white border-t-2 border-gray-200">
