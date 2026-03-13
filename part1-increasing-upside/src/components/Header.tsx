@@ -43,12 +43,12 @@ export function Header() {
             </div>
           </Link>
 
-          <nav className="hidden md:flex items-center space-x-8">
+          <nav className="hidden lg:flex items-center space-x-5">
             {navItems.map((item) => (
               <Link
                 key={item.path}
                 href={item.path}
-                className={`transition-colors relative ${
+                className={`transition-colors relative text-sm whitespace-nowrap ${
                   isActive(item.path)
                     ? "text-green-600 font-semibold"
                     : "text-gray-700 hover:text-green-600"
@@ -56,7 +56,7 @@ export function Header() {
               >
                 {item.path === "/cart" ? (
                   <span className="flex items-center gap-1">
-                    <ShoppingCart className="w-5 h-5" />
+                    <ShoppingCart className="w-4 h-4" />
                     {itemCount > 0 && (
                       <span className="bg-green-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
                         {itemCount}
@@ -70,25 +70,23 @@ export function Header() {
             ))}
           </nav>
 
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden lg:flex items-center space-x-3">
             {isAuthenticated ? (
-              <div className="flex items-center space-x-3">
-                <span className="text-sm text-gray-700 flex items-center gap-1">
-                  <User className="w-4 h-4" />
-                  {user?.name}
-                </span>
+              <div className="flex items-center space-x-2 border-r border-gray-200 pr-3">
+                <User className="w-4 h-4 text-green-600" />
+                <span className="text-sm font-medium text-gray-700">{user?.name}</span>
                 <button
                   onClick={logout}
-                  className="flex items-center gap-1 text-sm text-gray-500 hover:text-red-600 transition-colors"
+                  className="text-xs text-gray-400 hover:text-red-500 transition-colors ml-1"
+                  title="Logout"
                 >
-                  <LogOut className="w-4 h-4" />
-                  Logout
+                  <LogOut className="w-3.5 h-3.5" />
                 </button>
               </div>
             ) : (
               <Link
                 href="/login"
-                className="flex items-center gap-1 text-sm text-gray-700 hover:text-green-600 transition-colors"
+                className="flex items-center gap-1.5 text-sm text-gray-700 hover:text-green-600 transition-colors border-r border-gray-200 pr-3"
               >
                 <User className="w-4 h-4" />
                 Login
@@ -96,7 +94,7 @@ export function Header() {
             )}
             <a
               href="tel:+15551234567"
-              className="flex items-center space-x-2 bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors"
+              className="flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm"
             >
               <Phone className="w-4 h-4" />
               <span>(555) 123-4567</span>
@@ -104,7 +102,7 @@ export function Header() {
           </div>
 
           <button
-            className="md:hidden p-2"
+            className="lg:hidden p-2"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             {mobileMenuOpen ? (
@@ -116,7 +114,7 @@ export function Header() {
         </div>
 
         {mobileMenuOpen && (
-          <nav className="md:hidden py-4 border-t">
+          <nav className="lg:hidden py-4 border-t">
             {navItems.map((item) => (
               <Link
                 key={item.path}

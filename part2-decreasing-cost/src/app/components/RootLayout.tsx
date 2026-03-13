@@ -15,8 +15,8 @@ export function RootLayout() {
 
   const navItems = [
     { path: "/", label: "Dashboard", icon: LayoutDashboard },
-    { path: "/route-planning", label: "Route Planning", icon: Route },
     { path: "/customers", label: "Customers", icon: UserPlus },
+    { path: "/route-planning", label: "Route Planning", icon: Route },
     { path: "/technicians", label: "Technicians", icon: Users },
     { path: "/scheduling", label: "Scheduling", icon: Calendar },
     { path: "/inventory", label: "Inventory", icon: Package },
