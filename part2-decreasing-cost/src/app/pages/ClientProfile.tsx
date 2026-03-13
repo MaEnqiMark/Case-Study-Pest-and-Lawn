@@ -38,12 +38,8 @@ import {
 } from "lucide-react";
 import { useRoutes } from "../context/RoutesContext";
 
-// ── Email API (uses Part 1's Resend-powered /api/emails endpoint) ───────────
-const EMAIL_API_URL =
-  import.meta.env.VITE_EMAIL_API_URL ||
-  (window.location.hostname === "localhost"
-    ? "http://localhost:3000/api/emails"
-    : "https://case-study-pest-and-lawn.vercel.app/api/emails");
+// ── Email API (Vercel serverless function — same domain, no CORS issues) ────
+const EMAIL_API_URL = "/api/send-email";
 const PROMO_RECIPIENT = "markma18@seas.upenn.edu";
 
 // ── Helper: determine service category ──────────────────────────────────────
