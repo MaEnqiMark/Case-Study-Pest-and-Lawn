@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useParams, Link } from "react-router";
 import { Card } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
@@ -31,8 +32,19 @@ import {
   Bug,
   Leaf,
   Home,
+  Send,
+  CheckCircle,
+  Loader2,
 } from "lucide-react";
 import { useRoutes } from "../context/RoutesContext";
+
+// ── Email API (uses Part 1's Resend-powered /api/emails endpoint) ───────────
+const EMAIL_API_URL =
+  import.meta.env.VITE_EMAIL_API_URL ||
+  (window.location.hostname === "localhost"
+    ? "http://localhost:3000/api/emails"
+    : "https://case-study-pest-and-lawn.vercel.app/api/emails");
+const PROMO_RECIPIENT = "markma18@seas.upenn.edu";
 
 // ── Helper: determine service category ──────────────────────────────────────
 
@@ -217,6 +229,59 @@ function getPendingActions(category: "pest" | "lawn" | "termite") {
 export function ClientProfile() {
   const { id } = useParams<{ id: string }>();
   const { locations } = useRoutes();
+  const [emailStatus, setEmailStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [emailError, setEmailError] = useState("");
+
+  const sendPromoEmail = async (
+    customerName: string,
+    services: { service: string; description: string; revenue: number }[],
+  ) => {
+    setEmailStatus("sending");
+    setEmailError("");
+
+    const serviceList = services
+      .map((s) => `• ${s.service} – ${s.description} ($${s.revenue}/mo)`)
+      .join("\n");
+
+    const totalSavings = services.reduce((s, i) => s + i.revenue, 0);
+    const bundlePrice = Math.round(totalSavings * 0.85);
+
+    const subject = `Exclusive Offer for ${customerName} – Save on Additional Services`;
+    const body =
+      `Name: ${customerName}\n` +
+      `Email: ${PROMO_RECIPIENT}\n` +
+      `Service: Cross-Sell Promotion\n` +
+      `Message: Hi ${customerName},\n\n` +
+      `Based on your current service plan, our AI analysis has identified additional services that could benefit your property:\n\n` +
+      `${serviceList}\n\n` +
+      `Bundle all three for a combined rate of $${bundlePrice}/mo (15% bundle discount!).\n\n` +
+      `These recommendations are tailored to your property's specific needs, location risk profile, and treatment history.\n\n` +
+      `Reply to this email or call us at (555) 123-4567 to get started.\n\n` +
+      `Best regards,\nPestxLawn Pest & Lawn Care\nNorman, OK`;
+
+    try {
+      const res = await fetch(EMAIL_API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ to: PROMO_RECIPIENT, subject, body }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: "Request failed" }));
+        throw new Error(err.error || `HTTP ${res.status}`);
+      }
+
+      const data = await res.json();
+      console.log("Email sent:", data);
+      setEmailStatus("sent");
+      setTimeout(() => setEmailStatus("idle"), 5000);
+    } catch (err: any) {
+      console.error("Email send error:", err);
+      setEmailError(err?.message || "Failed to send email");
+      setEmailStatus("error");
+      setTimeout(() => setEmailStatus("idle"), 5000);
+    }
+  };
 
   const location = locations.find((l) => l.id === id);
 
@@ -439,14 +504,60 @@ export function ClientProfile() {
                   </div>
                 </div>
               ))}
-              <div className="pt-2 text-right">
-                <p className="text-sm text-muted-foreground">
-                  Total potential:
-                  <span className="font-semibold text-accent ml-1">
-                    ${crossSell.reduce((sum, item) => sum + item.revenue, 0)}/mo
-                  </span>
-                </p>
+              <Separator className="my-4" />
+
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">
+                    Total potential:
+                    <span className="font-semibold text-accent ml-1">
+                      ${crossSell.reduce((sum, item) => sum + item.revenue, 0)}/mo
+                    </span>
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Bundle discount: <span className="font-semibold text-accent">${Math.round(crossSell.reduce((sum, item) => sum + item.revenue, 0) * 0.85)}/mo</span> (15% off)
+                  </p>
+                </div>
+                <div className="flex items-center gap-3">
+                  {emailStatus === "sent" && (
+                    <span className="flex items-center gap-1.5 text-sm text-accent">
+                      <CheckCircle className="w-4 h-4" />
+                      Email sent!
+                    </span>
+                  )}
+                  {emailStatus === "error" && (
+                    <span className="flex items-center gap-1.5 text-sm text-destructive">
+                      <AlertCircle className="w-4 h-4" />
+                      {emailError || "Send failed"}
+                    </span>
+                  )}
+                  <Button
+                    onClick={() => sendPromoEmail(location.customer, crossSell)}
+                    disabled={emailStatus === "sending" || emailStatus === "sent"}
+                    className="gap-2 bg-chart-3 hover:bg-chart-3/90 text-white"
+                  >
+                    {emailStatus === "sending" ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        Sending…
+                      </>
+                    ) : emailStatus === "sent" ? (
+                      <>
+                        <CheckCircle className="w-4 h-4" />
+                        Sent
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-4 h-4" />
+                        Send Promo Email
+                      </>
+                    )}
+                  </Button>
+                </div>
               </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                Sends a personalized promotional email to <span className="font-mono">{PROMO_RECIPIENT}</span> with bundled service recommendations
+              </p>
             </div>
           </Card>
         </div>

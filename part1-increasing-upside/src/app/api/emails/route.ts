@@ -5,6 +5,18 @@ const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
   : null;
 
+// CORS headers so Part 2 (employee dashboard) can call this endpoint
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type",
+};
+
+// Handle preflight
+export async function OPTIONS() {
+  return NextResponse.json({}, { headers: corsHeaders });
+}
+
 // In-memory log of sent emails (for demo tracking)
 const emailLog: {
   id: string;
@@ -135,7 +147,7 @@ export async function POST(request: NextRequest) {
   if (!to || !subject || !body) {
     return NextResponse.json(
       { error: "to, subject, and body are required" },
-      { status: 400 }
+      { status: 400, headers: corsHeaders }
     );
   }
 
@@ -154,7 +166,7 @@ export async function POST(request: NextRequest) {
       });
 
       if (error) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        return NextResponse.json({ error: error.message }, { status: 500, headers: corsHeaders });
       }
 
       emailLog.push({
@@ -170,11 +182,11 @@ export async function POST(request: NextRequest) {
         resendId: data?.id,
         status: "sent",
         message: `Email sent to ${to}`,
-      });
+      }, { headers: corsHeaders });
     } catch (err) {
       return NextResponse.json(
         { error: `Failed to send: ${err}` },
-        { status: 500 }
+        { status: 500, headers: corsHeaders }
       );
     }
   }
@@ -193,7 +205,7 @@ export async function POST(request: NextRequest) {
     status: "simulated",
     message: `Email simulated to ${to} (set RESEND_API_KEY to send real emails)`,
     preview: { to, subject, body },
-  });
+  }, { headers: corsHeaders });
 }
 
 // GET: view email send log
@@ -201,5 +213,5 @@ export async function GET() {
   return NextResponse.json({
     totalSent: emailLog.length,
     emails: emailLog,
-  });
+  }, { headers: corsHeaders });
 }

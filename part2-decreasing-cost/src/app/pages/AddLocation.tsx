@@ -30,8 +30,49 @@ import {
   Trash2,
   Sparkles,
   ArrowRight,
+  AlertTriangle,
 } from "lucide-react";
-import { useRoutes, geocodeAddress } from "../context/RoutesContext";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../components/ui/tooltip";
+import { useRoutes, geocodeAddress, type ServiceLocation } from "../context/RoutesContext";
+
+// ── Action Required logic ───────────────────────────────────────────────────
+// Determines if a customer needs attention based on multiple signals
+
+function getActionRequired(loc: ServiceLocation): { needed: boolean; reasons: string[] } {
+  const reasons: string[] = [];
+
+  // 1. Overdue service — simulate last-service date from ID hash
+  const hash = loc.id.split("").reduce((a, c) => a + c.charCodeAt(0), 0);
+  const daysSinceService = (hash % 60) + 10; // 10–69 days ago
+  const frequencyDays: Record<string, number> = {
+    "Monthly": 30, "Bi-monthly": 60, "Quarterly": 90, "Annual": 365, "One-time": 999,
+  };
+  const expectedInterval = frequencyDays[loc.frequency] || 90;
+  if (daysSinceService > expectedInterval * 0.9) {
+    reasons.push(`Overdue: ${daysSinceService}d since last service (${loc.frequency})`);
+  }
+
+  // 2. Cross-sell not utilized — pest-only customers missing lawn, and vice versa
+  const lower = loc.serviceType.toLowerCase();
+  if (!lower.includes("lawn") && !lower.includes("weed") && !lower.includes("fertiliz") && !lower.includes("aeration")) {
+    reasons.push("Cross-sell: No lawn care plan");
+  }
+  if (!lower.includes("termite") && !lower.includes("pest") && !lower.includes("rodent")) {
+    reasons.push("Cross-sell: No pest protection");
+  }
+
+  // 3. Forecast risk — properties in high-risk zones (south/east Norman, near water)
+  if (loc.lat < 35.21 || loc.lng > -97.40) {
+    reasons.push("Forecast: High pest risk zone — spring surge expected");
+  }
+
+  return { needed: reasons.length > 0, reasons };
+}
 
 const SERVICE_TYPES = [
   "General Pest Treatment",
@@ -380,6 +421,7 @@ export function AddLocation() {
                 <TableHead>Frequency</TableHead>
                 <TableHead>Technician</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead>Action</TableHead>
                 <TableHead className="w-12"></TableHead>
               </TableRow>
             </TableHeader>
@@ -436,6 +478,38 @@ export function AddLocation() {
                         ? "New"
                         : "Pending"}
                     </Badge>
+                  </TableCell>
+                  <TableCell>
+                    {(() => {
+                      const action = getActionRequired(loc);
+                      if (!action.needed) {
+                        return (
+                          <Badge variant="outline" className="bg-accent/10 text-accent border-accent/20 text-xs">
+                            <CheckCircle className="w-3 h-3 mr-1" />
+                            OK
+                          </Badge>
+                        );
+                      }
+                      return (
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/20 text-xs cursor-help">
+                                <AlertTriangle className="w-3 h-3 mr-1" />
+                                Action Required
+                              </Badge>
+                            </TooltipTrigger>
+                            <TooltipContent side="left" className="max-w-xs">
+                              <ul className="text-xs space-y-1">
+                                {action.reasons.map((r, i) => (
+                                  <li key={i}>• {r}</li>
+                                ))}
+                              </ul>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      );
+                    })()}
                   </TableCell>
                   <TableCell>
                     {loc.status === "new" && (
