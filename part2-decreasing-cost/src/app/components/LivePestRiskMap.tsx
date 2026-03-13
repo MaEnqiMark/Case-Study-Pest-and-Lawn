@@ -94,27 +94,27 @@ const levelStyles: Record<
   { color: string; opacity: string; border: string; badgeCls: string }
 > = {
   CRITICAL: {
-    color: "rgba(239, 68, 68, 0.55)",
-    opacity: "0.95",
-    border: "rgba(239, 68, 68, 0.7)",
+    color: "rgba(239, 68, 68, 0.7)",
+    opacity: "1",
+    border: "rgba(239, 68, 68, 0.85)",
     badgeCls: "bg-red-50 text-red-700 border-red-200",
   },
   HIGH: {
-    color: "rgba(249, 115, 22, 0.50)",
-    opacity: "0.9",
-    border: "rgba(249, 115, 22, 0.65)",
+    color: "rgba(249, 115, 22, 0.6)",
+    opacity: "0.95",
+    border: "rgba(249, 115, 22, 0.8)",
     badgeCls: "bg-orange-50 text-orange-700 border-orange-200",
   },
   MODERATE: {
-    color: "rgba(234, 179, 8, 0.45)",
-    opacity: "0.85",
-    border: "rgba(234, 179, 8, 0.6)",
+    color: "rgba(234, 179, 8, 0.55)",
+    opacity: "0.9",
+    border: "rgba(234, 179, 8, 0.75)",
     badgeCls: "bg-yellow-50 text-yellow-700 border-yellow-200",
   },
   LOW: {
-    color: "rgba(34, 197, 94, 0.35)",
-    opacity: "0.8",
-    border: "rgba(34, 197, 94, 0.5)",
+    color: "rgba(34, 197, 94, 0.45)",
+    opacity: "0.85",
+    border: "rgba(34, 197, 94, 0.65)",
     badgeCls: "bg-green-50 text-green-700 border-green-200",
   },
 };
@@ -167,8 +167,8 @@ export function LivePestRiskMap() {
                 <div
                   className="absolute inset-0 rounded-full"
                   style={{
-                    background: `radial-gradient(ellipse at center, ${style.color} 0%, ${style.color.replace(/[\d.]+\)$/, "0.25)")} 55%, transparent 80%)`,
-                    filter: "blur(6px)",
+                    background: `radial-gradient(ellipse at center, ${style.color} 0%, ${style.color.replace(/[\d.]+\)$/, "0.4)")} 55%, transparent 85%)`,
+                    filter: "blur(4px)",
                     opacity: style.opacity,
                     transform: isActive ? "scale(1.1)" : "scale(1)",
                     transition: "transform 0.3s ease",

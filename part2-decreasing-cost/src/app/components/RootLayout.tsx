@@ -3,6 +3,7 @@ import {
   LayoutDashboard,
   Route,
   UserPlus,
+  Users,
   Calendar,
   Package,
   FileText,
@@ -14,8 +15,9 @@ export function RootLayout() {
 
   const navItems = [
     { path: "/", label: "Dashboard", icon: LayoutDashboard },
-    { path: "/customers", label: "Customers", icon: UserPlus },
     { path: "/route-planning", label: "Route Planning", icon: Route },
+    { path: "/customers", label: "Customers", icon: UserPlus },
+    { path: "/technicians", label: "Technicians", icon: Users },
     { path: "/scheduling", label: "Scheduling", icon: Calendar },
     { path: "/inventory", label: "Inventory", icon: Package },
     { path: "/reports", label: "Tech Reports", icon: FileText },

@@ -388,7 +388,12 @@ export function AddLocation() {
                 <TableRow key={loc.id} className="hover:bg-muted/30">
                   <TableCell className="font-medium">
                     <div>
-                      {loc.customer}
+                      <Link
+                        to={`/customer/${loc.id}`}
+                        className="hover:underline hover:text-primary transition-colors"
+                      >
+                        {loc.customer}
+                      </Link>
                       {loc.notes && (
                         <p className="text-xs text-muted-foreground mt-0.5">
                           {loc.notes}

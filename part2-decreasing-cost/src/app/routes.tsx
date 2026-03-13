@@ -8,6 +8,8 @@ import { TechReports } from "./pages/TechReports";
 import { TechnicianProfile } from "./pages/TechnicianProfile";
 import { Forecasting } from "./pages/Forecasting";
 import { AddLocation } from "./pages/AddLocation";
+import { Technicians } from "./pages/Technicians";
+import { ClientProfile } from "./pages/ClientProfile";
 
 export const router = createBrowserRouter([
   {
@@ -21,7 +23,9 @@ export const router = createBrowserRouter([
       { path: "inventory", Component: Inventory },
       { path: "reports", Component: TechReports },
       { path: "forecasting", Component: Forecasting },
+      { path: "technicians", Component: Technicians },
       { path: "technician/:id", Component: TechnicianProfile },
+      { path: "customer/:id", Component: ClientProfile },
     ],
   },
 ]);

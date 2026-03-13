@@ -1,14 +1,16 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Phone, Menu, X, ShoppingCart } from "lucide-react";
+import { Phone, Menu, X, ShoppingCart, User, LogOut } from "lucide-react";
 import { useState } from "react";
 import { useCart } from "@/lib/cart-context";
+import { useAuth } from "@/lib/auth-context";
 
 export function Header() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { itemCount } = useCart();
+  const { user, isAuthenticated, logout } = useAuth();
 
   const navItems = [
     { path: "/", label: "Home" },
@@ -69,6 +71,29 @@ export function Header() {
           </nav>
 
           <div className="hidden md:flex items-center space-x-4">
+            {isAuthenticated ? (
+              <div className="flex items-center space-x-3">
+                <span className="text-sm text-gray-700 flex items-center gap-1">
+                  <User className="w-4 h-4" />
+                  {user?.name}
+                </span>
+                <button
+                  onClick={logout}
+                  className="flex items-center gap-1 text-sm text-gray-500 hover:text-red-600 transition-colors"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <Link
+                href="/login"
+                className="flex items-center gap-1 text-sm text-gray-700 hover:text-green-600 transition-colors"
+              >
+                <User className="w-4 h-4" />
+                Login
+              </Link>
+            )}
             <a
               href="tel:+15551234567"
               className="flex items-center space-x-2 bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors"
@@ -106,6 +131,29 @@ export function Header() {
                 {item.label}
               </Link>
             ))}
+            {isAuthenticated ? (
+              <div className="flex items-center justify-between py-2 mt-2 border-t border-gray-100 pt-4">
+                <span className="text-sm text-gray-700 flex items-center gap-1">
+                  <User className="w-4 h-4" />
+                  {user?.name}
+                </span>
+                <button
+                  onClick={() => { logout(); setMobileMenuOpen(false); }}
+                  className="flex items-center gap-1 text-sm text-red-600"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <Link
+                href="/login"
+                className="block py-2 text-gray-700 hover:text-green-600 transition-colors mt-2 border-t border-gray-100 pt-4"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Login
+              </Link>
+            )}
             <a
               href="tel:+15551234567"
               className="flex items-center space-x-2 bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors mt-4 inline-flex"

@@ -245,6 +245,102 @@ export function Home() {
         </div>
       </section>
 
+      {/* Meet Our Team Section */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Meet Our Team
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Our certified technicians bring years of experience and dedication to every job
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              {
+                name: "Mike Sanders",
+                role: "Pest Control Specialist",
+                years: "4+ Years",
+                image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=400&w=400&q=80",
+                certs: ["Licensed Pesticide Applicator", "Termite Certified"],
+              },
+              {
+                name: "Jake Wilson",
+                role: "Pest Control Specialist",
+                years: "3+ Years",
+                image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=400&w=400&q=80",
+                certs: ["Commercial Pest Control", "Licensed Applicator"],
+              },
+              {
+                name: "Carlos Ramirez",
+                role: "Lawn Care Specialist",
+                years: "5+ Years",
+                image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=400&w=400&q=80",
+                certs: ["Lawn Care Professional", "Fertilizer Certified"],
+              },
+              {
+                name: "Derek Brown",
+                role: "Senior Pest Specialist",
+                years: "6+ Years",
+                image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=400&w=400&q=80",
+                certs: ["Rodent Specialist", "Termite Certified"],
+              },
+            ].map((member, index) => (
+              <div
+                key={index}
+                className="bg-gray-50 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow text-center"
+              >
+                <ImageWithFallback
+                  src={member.image}
+                  alt={member.name}
+                  className="w-full h-64 object-cover"
+                />
+                <div className="p-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                    {member.name}
+                  </h3>
+                  <p className="text-green-600 font-medium text-sm mb-1">
+                    {member.role}
+                  </p>
+                  <p className="text-gray-500 text-sm mb-3">{member.years} Experience</p>
+                  <div className="flex flex-wrap gap-1.5 justify-center">
+                    {member.certs.map((cert, i) => (
+                      <span
+                        key={i}
+                        className="inline-block bg-green-50 text-green-700 text-xs font-medium px-2.5 py-1 rounded-full border border-green-200"
+                      >
+                        {cert}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Team Group Photo */}
+          <div className="mt-16 relative rounded-2xl overflow-hidden shadow-xl">
+            <ImageWithFallback
+              src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&w=1200&h=400&q=80"
+              alt="PestxLawn team"
+              className="w-full h-72 object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-green-900/70 to-green-800/40 flex items-center">
+              <div className="px-12">
+                <h3 className="text-3xl font-bold text-white mb-2">
+                  A Team You Can Trust
+                </h3>
+                <p className="text-green-100 text-lg max-w-lg">
+                  Together, our technicians bring over 18 years of combined experience protecting homes and lawns across the Norman, OK metro area.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="py-20 bg-green-600">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
